@@ -1,0 +1,50 @@
+name: Blue-Green Deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Select the production version"
+        required: true
+        type: choice
+        options:
+          - v1
+          - v2
+
+jobs:
+  deploy:
+    name: Switch Production Version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Display current production version
+        run: |
+          echo "Current production version:"
+          cat config/production_switch.yml
+
+      - name: Deploy selected version
+        run: |
+          VERSION="${{ inputs.version }}"
+
+          if [ "$VERSION" = "v1" ]; then
+            echo "Deploying Blue - Version 1.0"
+          elif [ "$VERSION" = "v2" ]; then
+            echo "Deploying Green - Version 2.0"
+          fi
+
+      - name: Switch production
+        run: |
+          VERSION="${{ inputs.version }}"
+
+          echo "Production is now running $VERSION"
+
+          if [ "$VERSION" = "v1" ]; then
+            echo "Blue is active."
+            echo "Green is available for testing."
+          else
+            echo "Green is active."
+            echo "Blue is available for rollback."
+          fi
