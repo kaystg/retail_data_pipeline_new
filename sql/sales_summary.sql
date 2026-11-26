@@ -1,0 +1,1 @@
+SELECT category,SUM(sales_amount) AS total_sales FROM retail_sales GROUP BY category;
